@@ -30,7 +30,8 @@ public class Robot extends SampleRobot {
 	RobotDrive myRobot = new RobotDrive(0, 1); // class that handles basic drive
 												// operations
 
-	RobotPID robotPID;
+	TurnPID turnPID;
+	MovePID movePID;
 
 	Joystick leftStick = new Joystick(0); // set to ID 1 in DriverStation
 	Joystick rightStick = new Joystick(1); // set to ID 2 in DriverStation
@@ -43,7 +44,8 @@ public class Robot extends SampleRobot {
 		NetworkTable.setIPAddress("10.95.1.55");
 		table = NetworkTable.getTable("limelight");
 
-		robotPID = new RobotPID();
+		turnPID = new TurnPID();
+		movePID = new MovePID();
 	} 
 	/**
 	 * Runs the motors with tank steering.
@@ -52,8 +54,10 @@ public class Robot extends SampleRobot {
 	public void operatorControl() {
 		System.out.println("OperatorControl: isOperatorControl = " + isOperatorControl());
 		myRobot.setSafetyEnabled(true);
-		robotPID.enable();
+		turnPID.enable();
+		movePID.enable();
 		while (isOperatorControl() && isEnabled()) {
+			
 			double tx = table.getNumber("tx", 0);
 			double ty = table.getNumber("ty", 0);
 			double targetArea = table.getNumber("ta", 0);
@@ -61,15 +65,17 @@ public class Robot extends SampleRobot {
 			double targetView = table.getNumber("tv", 0);
 
 			SmartDashboard.putNumber("targetView", targetView);
-			SmartDashboard.putString("tx", String.format("%.2g", tx));
-			SmartDashboard.putString("ty", String.format("%.2g", ty));
+			SmartDashboard.putNumber("tx", tx);
+			SmartDashboard.putNumber("ty", ty);
 			
 		
 		}
-		robotPID.disable();
+		turnPID.disable();
+		movePID.disable();
 	}
 
-	public void setTankDrive(double left, double right) {
-		myRobot.tankDrive(left, right);
+	public void setArcadeDrive(double move, double turn) {
+		//TO DO: CHANGE 0 BACK TO TURN SO IT MOVES AND TURNS AT THE SAME TIME
+		myRobot.arcadeDrive(move, 0);
 	}
 }
